@@ -117,17 +117,17 @@ FROM users JOIN posts ON users.id = posts.user_id;
 
 ## CLI Commands
 
-| Command         | Description                         |
-| --------------- | ----------------------------------- | ----------------------------------- |
-| `help`          | Show available commands             |
-| `tables`        | List all tables in the database     |
-| `run <file>`    | Execute SQL commands from a file    |
-| `example [num]` | Show and run example SQL queries    |
-| `syntax [cmd]`  | Show proper syntax for SQL commands |
-| `log [n         | clear]`                             | View or clear the query history log |
-| `history`       | Show command history                |
-| `clear`         | Clear the screen                    |
-| `exit`, `quit`  | Exit the CLI                        |
+The following commands are available in the interactive CLI:
+
+- **`help`** - Show available commands
+- **`tables`** - List all tables in the database
+- **`run <file>`** - Execute SQL commands from a file
+- **`example [num]`** - Show and run example SQL queries
+- **`syntax [cmd]`** - Show proper syntax for SQL commands
+- **`log [n|clear]`** - View or clear the query history log
+- **`history`** - Show command history
+- **`clear`** - Clear the screen
+- **`exit`**, **`quit`** - Exit the CLI
 
 ## Example SQL Scripts
 
