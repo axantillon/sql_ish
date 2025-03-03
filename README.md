@@ -86,7 +86,7 @@ python -m sql_ish
 python -m sql_ish --execute "CREATE TABLE users (id, name, email)"
 
 # Run a SQL script file
-python -m sql_ish --script examples/01_blog_platform.sql
+python -m sql_ish --script examples/blog.sql
 
 # Disable colored output (if needed)
 python -m sql_ish --no-color
@@ -133,10 +133,10 @@ FROM users JOIN posts ON users.id = posts.user_id;
 
 The project includes several example SQL scripts:
 
-- `01_blog_platform.sql`: Blog with users, posts, and comments
-- `02_employee_management.sql`: HR database with employees and departments
-- `03_online_store.sql`: E-commerce with products, orders, and customers
-- `04_library_management.sql`: Library with books, authors, and loans
+- `blog.sql`: Blog with users, posts, and comments
+- `employee.sql`: HR database with employees and departments
+- `store.sql`: E-commerce with products, orders, and customers
+- `library.sql`: Library with books, authors, and loans
 
 ## CLI UI Features
 
