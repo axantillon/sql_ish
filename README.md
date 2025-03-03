@@ -48,14 +48,30 @@ where python  # On Windows
 
 ### Installing Dependencies
 
-Once your virtual environment is activated (or if you prefer to install globally):
+Once your virtual environment is activated, you have two options:
+
+#### Option 1: Install for development
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the CLI
+# Run the CLI directly from the source
+python main.py
+# OR (assuming your current directory is named 'sql_ish')
 python -m sql_ish
+```
+
+#### Option 2: Install as a package (recommended)
+
+```bash
+# Install the package in development mode
+pip install -e .
+
+# Now you can run using either of these commands:
+python -m sql_ish
+# OR use the command-line tool
+sqlish
 ```
 
 ## Usage
