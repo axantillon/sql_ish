@@ -163,13 +163,19 @@ SQL-ish illustrates several computer science concepts:
 ## Project Structure
 
 ```
-sql_ish/
-├── cli/       # Command-line interface components
-├── engine/    # Core database engine
-├── parser/    # SQL parsing and execution
-├── utils/     # Utility functions
-├── main.py    # Main entry point
-└── __main__.py # Package execution script
+/
+├── main.py           # Main entry point
+├── __main__.py       # Package execution script
+├── __init__.py       # Package initialization
+├── modules/          # Core modules
+│   ├── cli/          # Command-line interface components
+│   ├── core/         # Core data structures
+│   ├── engine/       # Database engine
+│   ├── parser/       # SQL parsing and execution
+│   └── utils/        # Utility functions
+├── examples/         # Example SQL scripts
+├── requirements.txt  # Package dependencies
+└── setup.py          # Package installation configuration
 ```
 
 ## Requirements
