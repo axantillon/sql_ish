@@ -12,6 +12,8 @@ Changes:
 - Updated as part of package restructuring
 - Improved error handling for table operations
 - Removed debug print statements after resolving issues
+- Standardized error handling and table validation
+- Improved query method to handle more SQL operations
 """
 
 from modules.core.table import Table
@@ -83,6 +85,24 @@ class Database:
             Table: The table with the given name, or None if not found
         """
         return self.tables.get(name)
+    
+    def _validate_table_exists(self, table_name):
+        """
+        Validate that a table exists in the database.
+        
+        Args:
+            table_name (str): Name of the table to validate
+            
+        Returns:
+            Table: The validated table
+            
+        Raises:
+            ValueError: If the table doesn't exist
+        """
+        table = self.get_table(table_name)
+        if not table:
+            raise ValueError(f"Table '{table_name}' does not exist")
+        return table
         
     def query(self, sql_query):
         """
@@ -99,22 +119,18 @@ class Database:
             
             if query_type == 'CREATE':
                 table_name, columns = parsed_data
-                table = self.create_table(table_name, columns)
+                self.create_table(table_name, columns)
                 return "Table created successfully"
                 
             elif query_type == 'INSERT':
                 table_name, values = parsed_data
-                table = self.get_table(table_name)
-                if not table:
-                    raise ValueError(f"Table '{table_name}' does not exist")
+                table = self._validate_table_exists(table_name)
                 table.insert(values)
                 return "Row inserted successfully"
                 
             elif query_type == 'SELECT':
                 table_name, columns, condition = parsed_data
-                table = self.get_table(table_name)
-                if not table:
-                    raise ValueError(f"Table '{table_name}' does not exist")
+                table = self._validate_table_exists(table_name)
                 
                 # Apply WHERE clause if present
                 if condition:
@@ -128,6 +144,32 @@ class Database:
                     result = result.project(*columns)
                 
                 return result
+            
+            elif query_type == 'DELETE':
+                table_name, condition = parsed_data
+                table = self._validate_table_exists(table_name)
+                
+                # Apply WHERE clause if present
+                if condition:
+                    condition_func = build_condition_function(condition)
+                    count = table.delete(condition_func)
+                else:
+                    count = table.delete()
+                
+                return f"{count} row(s) deleted"
+            
+            elif query_type == 'UPDATE':
+                table_name, updates, condition = parsed_data
+                table = self._validate_table_exists(table_name)
+                
+                # Apply WHERE clause if present
+                if condition:
+                    condition_func = build_condition_function(condition)
+                    count = table.update(updates, condition_func)
+                else:
+                    count = table.update(updates)
+                
+                return f"{count} row(s) updated"
                 
             else:
                 raise ValueError(f"Unsupported query type: {query_type}")
@@ -148,13 +190,8 @@ class Database:
         Returns:
             Table: Result of the join operation
         """
-        left_table = self.get_table(left_table_name)
-        right_table = self.get_table(right_table_name)
-        
-        if not left_table:
-            raise ValueError(f"Table '{left_table_name}' does not exist")
-        if not right_table:
-            raise ValueError(f"Table '{right_table_name}' does not exist")
+        left_table = self._validate_table_exists(left_table_name)
+        right_table = self._validate_table_exists(right_table_name)
             
         if join_type == 'inner':
             return inner_join(left_table, right_table, join_column)
