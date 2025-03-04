@@ -81,4 +81,4 @@ SELECT name, price FROM products WHERE category_id = 1 AND price > 150;
 SELECT id, order_date, total_amount, status FROM orders WHERE customer_id = 1;
 
 -- Show products in the Clothing category
-SELECT products.name, products.price FROM products WHERE category_id = 5 OR category_id = 6; 
+SELECT products.name, products.price FROM products WHERE category_id = 1001 OR category_id = 1006; 

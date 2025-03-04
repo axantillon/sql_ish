@@ -12,6 +12,7 @@ Changes:
 - Fixed parse_insert to handle INSERT queries correctly
 - Updated as part of package restructuring
 - Fixed parse_select to parse WHERE clause into a Condition object
+- Added parse_update function to support UPDATE commands
 """
 
 import re
@@ -176,9 +177,112 @@ def parse_where_clause(where_clause):
     for op in ['=', '<>', '!=', '>', '<', '>=', '<=']:
         if op in where_clause:
             col, val = where_clause.split(op, 1)
-            return Comparison(col.strip(), op, val.strip())
+            col = col.strip()
+            val = val.strip()
+            
+            # Handle quoted values
+            if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+                val = val[1:-1]  # Remove the quotes
+            elif val.lower() == 'null':
+                val = None
+            else:
+                # Try to convert to numeric if possible
+                try:
+                    if '.' in val:
+                        val = float(val)
+                    else:
+                        val = int(val)
+                except ValueError:
+                    # Keep as string if not numeric
+                    pass
+                    
+            return Comparison(col, op, val)
     
     raise ValueError(f"Invalid WHERE clause: {where_clause}")
+
+def parse_update(query):
+    """
+    Parse an UPDATE statement.
+    
+    Format: UPDATE table_name SET col1 = val1, col2 = val2, ... WHERE condition
+    
+    Args:
+        query (str): The UPDATE query
+        
+    Returns:
+        tuple: (table_name, updates, condition)
+    """
+    # Extract table name, SET clause, and WHERE clause
+    match = re.search(r'UPDATE\s+(\w+)\s+SET\s+(.*?)(?:\s+WHERE\s+(.*))?$', query, re.IGNORECASE)
+    if not match:
+        raise ValueError("Invalid UPDATE syntax")
+    
+    table_name = match.group(1)
+    set_clause = match.group(2)
+    condition_str = match.group(3) if match.group(3) else None
+    
+    # Parse SET clause
+    updates = {}
+    set_items = set_clause.split(',')
+    for item in set_items:
+        if '=' not in item:
+            raise ValueError(f"Invalid SET clause: {item}")
+        
+        col, val = item.split('=', 1)
+        col = col.strip()
+        val = val.strip()
+        
+        # Handle quoted strings
+        if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+            val = val[1:-1]  # Remove quotes
+        elif val.lower() == 'null':
+            val = None
+        else:
+            # Try to convert to numeric
+            try:
+                if '.' in val:
+                    val = float(val)
+                else:
+                    val = int(val)
+            except ValueError:
+                # Keep as string if not numeric
+                pass
+                
+        updates[col] = val
+    
+    # Parse WHERE clause if present
+    condition = None
+    if condition_str:
+        condition = parse_where_clause(condition_str)
+    
+    return (table_name, updates, condition)
+
+def parse_delete(query):
+    """
+    Parse a DELETE statement.
+    
+    Format: DELETE FROM table_name WHERE condition
+    
+    Args:
+        query (str): The DELETE query
+        
+    Returns:
+        tuple: (table_name, condition)
+    """
+    # Extract table name and WHERE clause
+    match = re.search(r'DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*))?$', query, re.IGNORECASE)
+    if not match:
+        raise ValueError("Invalid DELETE syntax")
+    
+    table_name = match.group(1)
+    condition_str = match.group(2) if match.group(2) else None
+    
+    # Parse WHERE clause if present
+    condition = None
+    if condition_str:
+        condition = parse_where_clause(condition_str)
+    
+    return (table_name, condition)
 
 def parse_query(query):
     """
@@ -200,6 +304,12 @@ def parse_query(query):
     
     elif query.upper().startswith('SELECT'):
         return ('SELECT', parse_select(query))
+    
+    elif query.upper().startswith('UPDATE'):
+        return ('UPDATE', parse_update(query))
+        
+    elif query.upper().startswith('DELETE FROM'):
+        return ('DELETE', parse_delete(query))
     
     else:
         raise ValueError(f"Unsupported query type: {query}") 

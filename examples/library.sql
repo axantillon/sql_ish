@@ -85,3 +85,8 @@ WHERE loans.return_date IS NULL AND loans.due_date < '2023-05-15';
 
 -- Count books by genre
 SELECT genres.name, COUNT(*) FROM books, genres GROUP BY genre_id; 
+
+-- JOIN EXAMPLES
+
+-- JOIN
+SELECT * FROM books JOIN authors ON books.author_id = authors.id;

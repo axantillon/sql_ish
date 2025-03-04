@@ -10,6 +10,7 @@ Changes:
 - Set theory operations (union, intersection, difference, product)
 - Updated as part of package restructuring
 - Added __bool__ method to ensure tables are always truthy, even when empty
+- Added update and delete methods for data manipulation
 """
 
 import copy
@@ -110,6 +111,69 @@ class Table:
             result.rows.append(new_row)
             
         return result
+    
+    def update(self, updates, condition_func=None):
+        """
+        Update rows in the table that match a condition.
+        
+        Args:
+            updates (dict): Dictionary mapping column names to new values
+            condition_func: Function that takes (row, columns) and returns bool
+            
+        Returns:
+            int: Number of rows updated
+        """
+        # Validate column names in updates
+        for col in updates:
+            if col not in self.columns:
+                raise ValueError(f"Unknown column: {col}")
+        
+        # Get column indices for updates
+        col_indices = {col: self.columns.index(col) for col in updates}
+        
+        # Count updated rows
+        count = 0
+        
+        # Update matching rows
+        for i, row in enumerate(self.rows):
+            if condition_func is None or condition_func(row, self.columns):
+                # Create a new row with updates
+                new_row = list(row)
+                for col, val in updates.items():
+                    new_row[col_indices[col]] = val
+                self.rows[i] = tuple(new_row)  # Keep immutable
+                count += 1
+                
+        return count
+    
+    def delete(self, condition_func=None):
+        """
+        Delete rows from the table that match a condition.
+        
+        Args:
+            condition_func: Function that takes (row, columns) and returns bool
+            
+        Returns:
+            int: Number of rows deleted
+        """
+        if condition_func is None:
+            # Delete all rows
+            count = len(self.rows)
+            self.rows = []
+            return count
+            
+        # Find rows to keep
+        new_rows = []
+        count = 0
+        
+        for row in self.rows:
+            if not condition_func(row, self.columns):
+                new_rows.append(row)
+            else:
+                count += 1
+                
+        self.rows = new_rows
+        return count
     
     def union(self, other):
         """

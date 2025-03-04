@@ -8,6 +8,7 @@ Changes:
 - Initial implementation of the parser module
 - Expose the parse_query function for external use
 - Updated as part of package restructuring
+- Added parse_update and parse_delete functions
 """
 
 from modules.parser.parser import (
@@ -15,7 +16,9 @@ from modules.parser.parser import (
     parse_create_table,
     parse_insert,
     parse_select,
-    parse_where_clause
+    parse_where_clause,
+    parse_update,
+    parse_delete
 )
 
 __all__ = [
@@ -23,5 +26,7 @@ __all__ = [
     'parse_create_table', 
     'parse_insert',
     'parse_select',
-    'parse_where_clause'
+    'parse_where_clause',
+    'parse_update',
+    'parse_delete'
 ] 
