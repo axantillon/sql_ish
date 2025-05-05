@@ -3,6 +3,11 @@
 setup.py - Installation script for SQL-ish
 
 This file enables installation of the SQL-ish package using pip.
+
+Changes:
+- Added MCP server module to packages
+- Added sqlish-mcp console script for running the MCP server
+- Updated package requirements to include MCP dependencies
 """
 
 from setuptools import setup, find_packages
@@ -36,15 +41,25 @@ setup(
     author="Axel Cantillon",
     author_email="example@example.com",  # Replace with your email if you want
     url="https://github.com/yourusername/sql-ish",  # Replace with your repository URL
-    packages=['modules', 'modules.cli', 'modules.core', 'modules.engine', 'modules.parser', 'modules.utils', 'modules.tests'],
+    packages=[
+        'modules', 
+        'modules.cli', 
+        'modules.core', 
+        'modules.engine', 
+        'modules.parser', 
+        'modules.utils', 
+        'modules.tests',
+        'modules.mcp'  # Added MCP module
+    ],
     package_dir={'modules': 'modules'},
-    py_modules=["main", "__main__", "__init__"],
+    py_modules=["main", "__main__", "__init__", "mcp_server"],
     include_package_data=True,
     install_requires=requirements,
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
             "sqlish=main:main",  # Use the main function from root main.py
+            "sqlish-mcp=modules.mcp.cli:run",  # MCP server entry point
         ],
     },
     classifiers=[
@@ -58,5 +73,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    keywords="sql, database, educational",
+    keywords="sql, database, educational, mcp, model-context-protocol, ai",
 ) 

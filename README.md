@@ -18,6 +18,7 @@ SQL-ish is an educational SQL database engine written in Python that demonstrate
 - **Tab Completion** for SQL keywords and table names
 - **Example-Based Learning** with built-in SQL examples
 - **Terminal UI** with box drawing characters for clean, readable output
+- **Model Context Protocol (MCP) Server** for integrating with AI assistants
 
 ## Installation
 
@@ -73,6 +74,59 @@ python -m sql_ish
 # OR use the command-line tool
 sqlish
 ```
+
+## Model Context Protocol (MCP) Server
+
+SQL-ish now includes an MCP server implementation that allows AI assistants to interact with your databases through the Model Context Protocol.
+
+### What is MCP?
+
+The Model Context Protocol (MCP) is an open standard created by Anthropic that allows AI models to securely access external data and tools. By exposing SQL-ish as an MCP server, AI assistants like Claude can directly interact with your SQL-ish databases.
+
+### Running the MCP Server
+
+To start the MCP server:
+
+```bash
+# Start the MCP server with default settings (localhost:8765)
+sqlish-mcp
+
+# Start with custom host and port
+sqlish-mcp --host 0.0.0.0 --port 9000
+
+# Initialize with a SQL script
+sqlish-mcp --init-script examples/sample_database.sql
+
+# Enable verbose logging
+sqlish-mcp --verbose
+```
+
+### Connecting to the MCP Server
+
+To connect to the SQL-ish MCP server from Claude Desktop:
+
+1. Open Claude Desktop
+2. Go to Settings > MCP Servers
+3. Add a new MCP server with the following configuration:
+   - Name: SQL-ish
+   - Command: `path/to/venv/bin/sqlish-mcp`
+   - (Optional) Add arguments like `--init-script examples/sample_database.sql`
+
+Once connected, you can ask Claude to:
+
+- Query your database: "Get all users from the database"
+- Create tables: "Create a new table called products"
+- Insert data: "Add a new product to the database"
+- Analyze data: "Find the average age of users in the database"
+
+### Features of the MCP Server
+
+The SQL-ish MCP server provides the following capabilities to AI assistants:
+
+- **Database Exploration**: Browse tables and their schemas
+- **Query Execution**: Run SQL-ish queries and view results
+- **Database Management**: Create and manage tables and data
+- **Data Analysis**: Perform analysis on the data in your database
 
 ## Usage
 

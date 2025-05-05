@@ -2,7 +2,7 @@
 # This project has minimal dependencies as it uses standard Python libraries
 
 # No external dependencies required for core functionality
-colorama==0.4.6  # Required for colored output in the CLI
+colorama>=0.4.6  # Required for colored output in the CLI
 
 # Platform-specific requirements
 # Windows: Use pyreadline3
@@ -12,6 +12,17 @@ pyreadline3>=3.4.1; platform_system == "Windows"
 readline>=8.1.0; platform_system != "Windows" and platform_system != "Darwin"
 
 # For development and testing (optional)
-pytest==7.3.1
-pytest-cov==4.1.0
-pytest-mock==3.10.0 
+pytest>=7.3.1
+pytest-cov>=4.1.0
+pytest-mock==3.10.0
+
+# MCP implementation dependencies - using GitHub repository with correct name
+mcp @ git+https://github.com/modelcontextprotocol/python-sdk.git@main
+websockets>=12.0
+
+# Additional dependencies
+pylint>=2.17.4
+setuptools>=67.8.0
+wheel>=0.40.0
+uvicorn>=0.24.0
+fastapi>=0.104.1 
